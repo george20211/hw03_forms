@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-3 mb-3 mt-1">
+      <div class="card">
+        <div class="card-body">
+          <div class="h2">
+            {{ author.get_full_name }}
+          </div>
+          <div class="h3 text-muted">
+              <a href="/{{ author.username }}/">@{{ author.username }}</a>
+           </div>
+         </div>
+         <ul class="list-group list-group-flush">
+           <li class="list-group-item">
+             <div class="h6 text-muted">
+               Подписчиков: XXX <br />
+               Подписан: xxx
+              </div>
+           </li>
+           <li class="list-group-item">
+              <div class="h6 text-muted">
+                Записей: {{ zapis }}
+                </div>
+            </li>
+          </ul>
+        </div>
+     </div>
+     <div class="col-md-9">
+     <!-- Начало блока с отдельным постом -->
+        <div class="card mb-3 mt-1 shadow-sm">
+          <div class="card-body">
+            <p class="card-text">
+              
+              <h3>
+                  Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
+              </h3>
+              <p>{{ author_post|linebreaksbr }}</p>
+              {% if not forloop.last %}<hr>{% endif %}
+              
+              {% include "paginator.html" %}
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group ">
+                <!-- Ссылка на страницу записи в атрибуте href-->
+               <a class="btn btn-sm text-muted" href="{{ author.username }}" role="button">
+                  Добавить комментарий
+                </a>
+                <!-- Ссылка на редактирование, показывается только автору записи.
+                Эту ссылку вы подключите в финальном задании спринта -->
+                   <a class="btn btn-sm text-muted" href="{{ text.post_edit }}/{{ post_id }}" role="button">
+                  Редактировать
+                </a>
+               </div>
+                <small class="text-muted"> {{ post.pub_date|date:"d M Y" }} </small>
+            </div>
+          </div>
+        </div>
+     {% include "paginator.html" %}
+ {% include "footer.html" %}
+{% endblock %}
+     </div>
+  </div>
+</main>

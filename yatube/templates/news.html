@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{% if not post %} Добавить запись {% else %}
+Редактировать запись {% endif %}{% endblock %}
+{% block content %}
+<h2>Новая запись</h2>
+        <form action="{% url 'new_post' %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Сохранить">
+        </form>
+{% endblock %}
