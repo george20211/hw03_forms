@@ -21,15 +21,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.all()[:12]
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
-    context = {
-        "group": group,
-        "posts": posts,
-        "page": page
-    }
-    return render(request, "group.html", context)
+    return render(request, "group.html", {"group": group, "posts": posts})
 
 
 class JustStaticPage(TemplateView):
@@ -38,31 +30,34 @@ class JustStaticPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['just_title'] = 'Очень простая страница'
-        context['just_text'] = '5 мин на страницу!'
+        context['just_text'] = 'я молодец'
         return context
 
 
 def profile(request, username):
     profile = get_object_or_404(User, username=username)
-    author_post = Post.objects.filter(author__username=username)
-    paginator = Paginator(author_post, 10)
+    author_posts = Post.objects.filter(author=profile).all()
+    #author_post = Post.objects.all().filter(author=author_posts)
+    paginator = Paginator(author_posts, 5)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {
         "username": username,
         "profile": profile,
-        "author_post": author_post,
         "page": page,
+        "author_posts": author_posts,
     }
     return render(request, 'profile.html', context)
 
 
 def post_view(request, username, post_id):
-    post = get_object_or_404(Post, pk=post_id, author__username=username)
-    return render(
-        request, 'post.html',
-        {'post': post,
-         'author': post.author})
+    post = get_object_or_404(Post, author__username=username, id=post_id)
+    author_posts = Post.objects.filter(author__username=username)
+    context = {
+        "author_posts": author_posts,
+        "post": post,
+    }
+    return render(request, 'post.html', context)
 
 
 @login_required
@@ -73,23 +68,26 @@ def new_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect("index")
-        return render(request, 'news.html', {'form': form})
-    form = PostForm()
-    return render(request, 'news.html', {'form': form})
+            return redirect('index')
+    else:
+        form = PostForm()
+    return render(request, 'new.html', {'form': form})
 
 
 @login_required
 def post_edit(request, username, post_id):
     if request.user == User.objects.get(username=username):
         post = Post.objects.get(id=post_id)
-        if request.method == 'POST':
-            form = PostForm(request.POST,
-                            instance=post)
-            if form.is_valid():
-                form.save()
-                return redirect("post", username, post_id)
-            return render(request, "news.html", {"form": form})
-        form = PostForm(instance=post)
-        return render(request, 'news.html', {'form': form, 'post': post})
+        if request.user  == post.author:
+            if request.method == 'POST':
+                form = PostForm(request.POST,
+                                instance=post)
+                if form.is_valid():
+                    form.save()
+                    return redirect("post", username, post_id)
+                return render(request, "new.html", {"form": form})
+            form = PostForm(instance=post)
+            return render(request, 'new.html', {'form': form, 'post': post})
+        else:
+            return render(request, 'error.html')
     return redirect('post', username=username, post_id=post_id)

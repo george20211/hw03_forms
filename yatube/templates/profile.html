@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% block content %}
 <main role="main" class="container">
@@ -9,7 +10,7 @@
             {{ author.get_full_name }}
           </div>
           <div class="h3 text-muted">
-              <a href="/{{ author.username }}/">@{{ author.username }}</a>
+              <a href="/{{ author.username }}/">@{{ profile }}</a>
            </div>
          </div>
          <ul class="list-group list-group-flush">
@@ -21,7 +22,7 @@
            </li>
            <li class="list-group-item">
               <div class="h6 text-muted">
-                Записей: {{ zapis }}
+                Записей: {{ author_posts.count }}
                 </div>
             </li>
           </ul>
@@ -32,14 +33,13 @@
         <div class="card mb-3 mt-1 shadow-sm">
           <div class="card-body">
             <p class="card-text">
-              
+              {% for author_posts in page %}
               <h3>
-                  Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
+                  Автор: {{ profile }}
               </h3>
-              <p>{{ author_post|linebreaksbr }}</p>
-              {% if not forloop.last %}<hr>{% endif %}
               
-              {% include "paginator.html" %}
+              <p>{{ author_posts|linebreaksbr }}</p>
+              {% endfor %}
             <div class="d-flex justify-content-between align-items-center">
               <div class="btn-group ">
                 <!-- Ссылка на страницу записи в атрибуте href-->

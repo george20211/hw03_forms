@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not post %} 
+    Добавить запись 
+{% else %}
+    Редактировать запись 
+{% endif %}
+{% endblock %}
+{% block content %}
+<h2>Новая запись</h2>
+    <form method="post" enctype="multipart/form-data"
+     action="{% if post %}
+     {% url 'post_edit' user.username post.id %}
+     {% else %} {% url 'new_post' %}
+     {% endif %}">
+     {% csrf_token %}
+     {% for field in form %}
+       <div class="form-group row"
+            aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+         <label for="{{ field.id_for_label }}"
+                class="col-md-4 col-form-label text-md-left">
+           {{ field.label }}
+           {% if field.field.required %}
+             <span class="required">*</span>
+           {% endif %}
+           <form method="POST" class="post-form">{% csrf_token %}
+            <button type="submit" class="save btn btn-default">Save</button>
+         </label>
+       </div>
+       <div class="col-md-6">
+         {{ field }}
+         {% if field.help_text %}
+           <small id="{{ field.id_for_label }}-help"
+                  class="form-text text-muted">{{ field.help_text|safe }}
+           </small>
+         {% endif %}
+       </div>
+     {% endfor %}
+    </form>
+{% endblock %}
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
