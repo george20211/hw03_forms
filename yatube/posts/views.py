@@ -17,7 +17,15 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.all()[:12]
-    return render(request, "group.html", {"group": group, "posts": posts})
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+        "group": group,
+        "posts": posts,
+        "page": page,
+    }
+    return render(request, "group.html", context)
 
 
 class JustStaticPage(TemplateView):
