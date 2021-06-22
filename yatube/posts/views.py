@@ -3,10 +3,7 @@ from django.core.paginator import Paginator
 from django.views.generic.base import TemplateView
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
-
 from .models import Group, Post, User
-import datetime as dt
-from django.contrib.auth import get_user_model
 
 
 def index(request):
@@ -15,6 +12,7 @@ def index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     latest = Post.objects.all()[:11]
+
     return render(request, "index.html", {'page': page, })
 
 
@@ -82,19 +80,20 @@ def post_edit(request, username, post_id):
     if username != post.author:
         return render(request, 'error.html', {"error3": error3})
     if User.objects.filter(username=username).exists():
-            if request.user == User.objects.get(username=username):
-                if request.user == post.author:
-                    if request.method == 'POST':
-                        form = PostForm(request.POST,
-                                        instance=post)
-                        if form.is_valid():
-                            form.save()
-                            return redirect("post", username, post_id)
-                        return render(request, "new.html", {"form": form})
-                    form = PostForm(instance=post)
-                    return render(request, 'new.html', {'form': form, 'post': post})
-                return render(request, 'error.html', {"error1": error1})
-            return redirect('post', username=username, post_id=post_id)
+        if request.user == User.objects.get(username=username):
+            if request.user == post.author:
+                if request.method == 'POST':
+                    form = PostForm(request.POST,
+                                    instance=post)
+                    if form.is_valid():
+                        form.save()
+                        return redirect("post", username, post_id)
+                    return render(request, "new.html", {"form": form})
+                form = PostForm(instance=post)
+                return render(request, 'new.html', {'form': form,
+                              post': post})
+            return render(request, 'error.html', {"error1": error1})
+        return redirect('post', username=username, post_id=post_id)
     return render(request, 'error.html', {"error2": error2})
 
 
@@ -108,4 +107,3 @@ def stats(request):
         'last_register': last_register,
     }
     return render(request, 'top.html', context)
-    
