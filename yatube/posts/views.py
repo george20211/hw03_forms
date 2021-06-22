@@ -11,7 +11,6 @@ def index(request):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    latest = Post.objects.all()[:11]
 
     return render(request, "index.html", {'page': page, })
 
