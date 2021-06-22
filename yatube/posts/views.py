@@ -91,7 +91,7 @@ def post_edit(request, username, post_id):
                     return render(request, "new.html", {"form": form})
                 form = PostForm(instance=post)
                 return render(request, 'new.html', {'form': form,
-                              post': post})
+                              'post': post})
             return render(request, 'error.html', {"error1": error1})
         return redirect('post', username=username, post_id=post_id)
     return render(request, 'error.html', {"error2": error2})
