@@ -3,10 +3,7 @@ from django.core.paginator import Paginator
 from django.views.generic.base import TemplateView
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
-
 from .models import Group, Post, User
-import datetime as dt
-from django.contrib.auth import get_user_model
 
 
 def index(request):
@@ -14,7 +11,6 @@ def index(request):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    latest = Post.objects.all()[:11]
     return render(request, "index.html", {'page': page, })
 
 
