@@ -37,7 +37,6 @@ class JustStaticPage(TemplateView):
 def profile(request, username):
     profile = get_object_or_404(User, username=username)
     author_posts = Post.objects.filter(author=profile).all()
-    #author_post = Post.objects.all().filter(author=author_posts)
     paginator = Paginator(author_posts, 5)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -78,7 +77,7 @@ def new_post(request):
 def post_edit(request, username, post_id):
     if request.user == User.objects.get(username=username):
         post = Post.objects.get(id=post_id)
-        if request.user  == post.author:
+        if request.user == post.author:
             if request.method == 'POST':
                 form = PostForm(request.POST,
                                 instance=post)
@@ -91,3 +90,15 @@ def post_edit(request, username, post_id):
         else:
             return render(request, 'error.html')
     return redirect('post', username=username, post_id=post_id)
+
+
+def stats(request):
+    post_count_all = len(Post.objects.all())
+    users_count_all = len(User.objects.all())
+    last_register = User.date_joined
+    context = {
+        'post_count_all': post_count_all,
+        'users_count_all': users_count_all,
+        'last_register': last_register,
+    }
+    return render(request, 'top.html', context)
