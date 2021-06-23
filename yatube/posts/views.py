@@ -18,7 +18,11 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.all()[:12]
-    return render(request, "group.html", {"group": group, "posts": posts})
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(request, "group.html", {"group": group, "posts": posts,
+                  'page': page})
 
 
 class JustStaticPage(TemplateView):
@@ -52,6 +56,7 @@ def post_view(request, username, post_id):
     context = {
         "author_posts": author_posts,
         "post": post,
+        "author": post.author
     }
     return render(request, 'post.html', context)
 
@@ -76,8 +81,8 @@ def post_edit(request, username, post_id):
     error2 = "Такого пользователя не существует"
     error3 = "Пользователю не принадлежит пост"
     post = Post.objects.get(id=post_id)
-    if username != post.author:
-        return render(request, 'error.html', {"error3": error3})
+#    if username != post.author:
+#        return render(request, 'error.html', {"error3": error3})
     if User.objects.filter(username=username).exists():
         if request.user == User.objects.get(username=username):
             if request.user == post.author:

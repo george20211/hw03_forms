@@ -11,7 +11,8 @@
     <form method="post" enctype="multipart/form-data"
      action="{% if post %}
      {% url 'post_edit' user.username post.id %}
-     {% else %} {% url 'new_post' %}
+     {% else %} 
+     {% url 'new_post' %}
      {% endif %}">
      {% csrf_token %}
      {% for field in form %}
