@@ -79,7 +79,6 @@ def new_post(request):
 def post_edit(request, username, post_id):
     error1 = "Вы не автор поста"
     error2 = "Такого пользователя не существует"
-    error3 = "Пользователю не принадлежит пост"
     post = Post.objects.get(id=post_id)
 #    if username != post.author:
 #        return render(request, 'error.html', {"error3": error3})
