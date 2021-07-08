@@ -1,6 +1,7 @@
 # posts/tests/tests_url.py
 from django.test import TestCase, Client
 
+from posts.urls import *
 
 class StaticURLTests(TestCase):
     def setUp(self):

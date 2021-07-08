@@ -1,34 +1,9 @@
-
 {% extends "base.html" %}
 {% block content %}
 <main role="main" class="container">
   <div class="row">
     <div class="col-md-3 mb-3 mt-1">
-      <div class="card">
-        <div class="card-body">
-          <div class="h2">
-            {{ author.get_full_name }}
-          </div>
-          <div class="h3 text-muted">
-              <a href="/{{ author.username }}/">@{{ profile }}</a>
-           </div>
-         </div>
-         <ul class="list-group list-group-flush">
-           <li class="list-group-item">
-             <div class="h6 text-muted">
-               Подписчиков: XXX <br />
-               Подписан: xxx
-              </div>
-           </li>
-           <li class="list-group-item">
-              <div class="h6 text-muted">
-                Записей: {{ author_posts.count }}
-                </div>
-            </li>
-          </ul>
-        </div>
-     </div>
-     <div class="col-md-9">
+      {% include "info_user.html" %}
      <!-- Начало блока с отдельным постом -->
         <div class="card mb-3 mt-1 shadow-sm">
           <div class="card-body">
@@ -37,10 +12,7 @@
               <h3>
                   Автор: {{ profile }}
               </h3>
-              
               <p>{{ post|linebreaksbr }}</p>
-              
-            
             <div class="d-flex justify-content-between align-items-center">
               <div class="btn-group ">
                 <!-- Ссылка на страницу записи в атрибуте href-->
@@ -59,7 +31,6 @@
           </div>
         </div>
      {% include "paginator.html" %}
- {% include "footer.html" %}
 {% endblock %}
      </div>
   </div>

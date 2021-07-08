@@ -1,19 +1,14 @@
-        {% extends "base.html" %}
-        {% block title %}Последние обновления на сайте{% endblock %}
-        {% block header %}Последние обновления на сайте{% endblock %}
-        {% block content %}
+{% extends "base.html" %}
+{% block title %}Последние обновления на сайте{% endblock %}
+{% block header %}Последние обновления на сайте{% endblock %}
+{% block content %}
         
-            {% for post in page %}
-            <h3>
-                Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
-            </h3>
-            <p>{{ post.text|linebreaksbr }}</p>
-            {% if not forloop.last %}<hr>{% endif %}
-            {% endfor %}
-            {% include "paginator.html" %}
-            <footer class="pt-4 my-md-5 pt-md-5 border-top">
-                <h2><a href="{% url 'about:author' %}">Об авторе</a></h2>
-                <h2><a href="{% url 'about:tech' %}">О технологии</a></h2>
-                <p class="m-0 text-dark text-center ">Социальная сеть <span style="color:red">Ya</span>tube © {{ year }}, все права защищены.</p>
-            </footer> 
-        {% endblock %} 
+{% for post in page %}
+<h3>
+    Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
+</h3>
+<p>{{ post.text|linebreaksbr }}</p>
+{% if not forloop.last %}<hr>{% endif %}
+{% endfor %}
+{% include "paginator.html" %}
+{% endblock %} 

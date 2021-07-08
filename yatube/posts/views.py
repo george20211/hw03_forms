@@ -4,7 +4,8 @@ from django.views.generic.base import TemplateView
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
 from .models import Group, Post, User
-
+### У меня каким то чудом отправился старый архив((
+### Этот проект должен был быть на ревью
 
 def index(request):
     post_list = Post.objects.all()
@@ -21,7 +22,8 @@ def group_posts(request, slug):
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, "group.html", {"group": group, "posts": posts,
+
+    return render(request, "group.html", {"group": group,
                   'page': page})
 
 
@@ -37,26 +39,22 @@ class JustStaticPage(TemplateView):
 
 def profile(request, username):
     profile = get_object_or_404(User, username=username)
-    author_posts = Post.objects.filter(author=profile).all()
+    author_posts = profile.posts.all()
     paginator = Paginator(author_posts, 5)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {
-        "username": username,
-        "profile": profile,
         "page": page,
-        "author_posts": author_posts,
+        "profile": profile,
     }
     return render(request, 'profile.html', context)
 
 
 def post_view(request, username, post_id):
     post = get_object_or_404(Post, author__username=username, id=post_id)
-    author_posts = Post.objects.filter(author__username=username)
     context = {
-        "author_posts": author_posts,
-        "post": post,
-        "author": post.author
+        "author_posts": post.author,
+        "post": post
     }
     return render(request, 'post.html', context)
 
@@ -70,34 +68,24 @@ def new_post(request):
             post.author = request.user
             post.save()
             return redirect('index')
-    else:
-        form = PostForm()
+    form = PostForm()
     return render(request, 'new.html', {'form': form})
 
 
 @login_required
 def post_edit(request, username, post_id):
     error1 = "Вы не автор поста"
-    error2 = "Такого пользователя не существует"
-    post = Post.objects.get(id=post_id)
-#    if username != post.author:
-#        return render(request, 'error.html', {"error3": error3})
-    if User.objects.filter(username=username).exists():
-        if request.user == User.objects.get(username=username):
-            if request.user == post.author:
-                if request.method == 'POST':
-                    form = PostForm(request.POST,
-                                    instance=post)
-                    if form.is_valid():
-                        form.save()
-                        return redirect("post", username, post_id)
-                    return render(request, "new.html", {"form": form})
-                form = PostForm(instance=post)
-                return render(request, 'new.html', {'form': form,
-                              'post': post})
-            return render(request, 'error.html', {"error1": error1})
-        return redirect('post', username=username, post_id=post_id)
-    return render(request, 'error.html', {"error2": error2})
+    post = get_object_or_404(Post, author__username=username, id=post_id)
+    form = PostForm(request.POST,
+                    instance=post)
+    if request.user == post.author:
+        if request.method == 'POST' or None:
+            if form.is_valid():
+                form.save()
+                return redirect("post", username, post_id)
+        form = PostForm(instance=post)
+        return render(request, "new.html", {"form": form})
+    return render(request, 'error.html', {"error1": error1})
 
 
 def stats(request):
