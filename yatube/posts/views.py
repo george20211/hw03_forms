@@ -4,8 +4,7 @@ from django.views.generic.base import TemplateView
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
 from .models import Group, Post, User
-### У меня каким то чудом отправился старый архив((
-### Этот проект должен был быть на ревью
+
 
 def index(request):
     post_list = Post.objects.all()
